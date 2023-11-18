@@ -8,3 +8,4 @@
 - `npm install eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --save-dev`
 - `npx eslint --init`
 - `npm i ts-node-dev --save-dev` -> `tsnd --respawn ./src/server.ts` --> for relode on every save on our server.ts file no need build before production
+- (Follwe the system for creating module) Interface-> Schema -> models -> Query (module system)
