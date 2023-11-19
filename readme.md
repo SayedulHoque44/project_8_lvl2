@@ -9,3 +9,4 @@
 - `npx eslint --init`
 - `npm i ts-node-dev --save-dev` -> `tsnd --respawn ./src/server.ts` --> for relode on every save on our server.ts file no need build before production
 - (Follwe the system for creating module) Interface-> Schema -> models -> Query (module system)
+- (req-res of modular patter)// client (req) -> route.ts (req)-> controller.ts -><- service.ts -><-(req-res of database) : `client req will hit route.ts then route.ts will send req controller.ts then it will send req to service.ts ,service.ts will be send as a res to controller.ts , before the send res the server.ts will play req-res with database, when controller.ts got the res then it will send res to client as a human readable massage it can be {success,message,data}`

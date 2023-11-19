@@ -92,4 +92,4 @@ const StudentSchema = new Schema<Student>({
 1. modelName = model<MainType>('DocName', provide schema)
 2. modelName and DocName should be same
 */
-const Student = model<Student>("Student", StudentSchema);
+export const StudentModel = model<Student>("Student", StudentSchema);
