@@ -1,13 +1,15 @@
 // 1. Create an interface representing a document in MongoDB. --> 2 in student.model.ts (1 line)
 
+import { Model } from "mongoose";
+
 // user name Type (sub of Student)
-export type UserName = {
+export type TUserName = {
   firstName: string;
   middleName: string;
   lastName: string;
 };
 // Gurdian Type (sub of Student)
-export type Gurdian = {
+export type TGurdian = {
   fatherName: string;
   fatherOccupation: string;
   fatherContactNo: string;
@@ -17,7 +19,7 @@ export type Gurdian = {
 };
 
 // localGurdian Type (sub of Student)
-export type LocalGurdian = {
+export type TLocalGurdian = {
   name: string;
   occupation: string;
   contactNo: string;
@@ -25,10 +27,10 @@ export type LocalGurdian = {
 };
 
 // Student type (Main Type)
-export type Student = {
+export type TStudent = {
   id: string;
-  name: UserName;
-  gender: "male" | "female";
+  name: TUserName;
+  gender: "male" | "female" | "other";
   dateOfBirth: string;
   email: string;
   contactNo: string;
@@ -36,8 +38,23 @@ export type Student = {
   bloodGroup?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
   presentAddress: string;
   permanentAddress: string;
-  gurdian: Gurdian;
-  localGurdian: LocalGurdian;
+  gurdian: TGurdian;
+  localGurdian: TLocalGurdian;
   profileImg?: string;
   isActive: "active" | "blocked";
 };
+
+// coustom static -> for creating static method
+export interface StudentModel extends Model<TStudent> {
+  isUserExists(id: string): Promise<TStudent | null>;
+}
+
+// coustom instance -> for creating instance
+// export type StudentMethod = {
+//   isUserExists(id: string): Promise<TStudent | null>;
+// };
+// export type StudentModel = Model<
+//   TStudent,
+//   Record<string, never>,
+//   StudentMethod
+// >;

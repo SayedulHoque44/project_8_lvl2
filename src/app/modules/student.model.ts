@@ -1,10 +1,12 @@
 // 2. Create a Schema corresponding to the document interface. --> next (create model) -> line 85
 import { Schema, model } from "mongoose";
+import validator from "validator";
 import {
-  Gurdian,
-  LocalGurdian,
-  Student,
-  UserName,
+  StudentModel,
+  TGurdian,
+  TLocalGurdian,
+  TStudent,
+  TUserName,
 } from "./student/student.interface";
 
 /*
@@ -17,13 +19,34 @@ import {
 */
 
 // sub userNameschema of StudentSchema --> UserName from sub interface
-const userNameSchema = new Schema<UserName>({
-  firstName: { type: String, required: true },
+const userNameSchema = new Schema<TUserName>({
+  firstName: {
+    type: String,
+    required: [true, "First name required!"],
+    maxlength: [20, "{VALUE} length must be less than 20"],
+    trim: true,
+    validate: {
+      // mongoose e custom validate korte hole validate use krte hbe
+      validator: function (val: string) {
+        const firstNameStr = val.charAt(0).toUpperCase() + val.slice(1);
+        return firstNameStr === val; //true/false
+      },
+      message: `{VALUE} is not in capitalize format`, //if validator got false then this message will be shown
+    },
+  },
   middleName: { type: String },
-  lastName: { type: String, required: true },
+  lastName: {
+    type: String,
+    required: [true, "Last name required!"],
+    validate: {
+      validator: (value: string) => validator.isAlpha(value), // same as our coustom mongoose validator,just give us extra fn and features but working method same
+      message: `{VALUE} is not valid`,
+    },
+    trim: true,
+  },
 });
 // sub gurdianSchema of StudentSchema --> Gurdian from sub interface
-const gurdianSchema = new Schema<Gurdian>({
+const gurdianSchema = new Schema<TGurdian>({
   fatherName: {
     type: String,
     required: true,
@@ -50,7 +73,7 @@ const gurdianSchema = new Schema<Gurdian>({
   },
 });
 // sub localGurdianSchema of StudentSchema--> LocalGurdian from sub interface
-const localGurdianSchema = new Schema<LocalGurdian>({
+const localGurdianSchema = new Schema<TLocalGurdian>({
   name: {
     type: String,
     required: true,
@@ -70,21 +93,61 @@ const localGurdianSchema = new Schema<LocalGurdian>({
 });
 
 // Main StudentSchema
-const StudentSchema = new Schema<Student>({
-  id: { type: String },
-  name: userNameSchema,
-  gender: ["male", "female"],
+const StudentSchema = new Schema<TStudent, StudentModel>({
+  id: {
+    type: String,
+    unique: true, // indexing kore
+    required: true,
+  },
+  name: {
+    type: userNameSchema,
+    required: [true, "Name Requierd"],
+  },
+  gender: {
+    type: String,
+    enum: {
+      values: ["male", "female", "other"],
+      message: `The gender field can only be on of the following: 'male','female' or 'other'`,
+    },
+    required: true,
+  },
   dateOfBirth: { type: String, required: true },
-  email: { type: String, required: true },
+  email: {
+    type: String,
+    required: [true, "Email is Requeird!"],
+    unique: true,
+    // validate: {
+    //   validator: (email: string) => validator.isEmail(email),
+    //   message: `{VALUE} is not valid Email`,
+    // },
+  },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
-  bloodGroup: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+  bloodGroup: {
+    type: String,
+    enum: {
+      values: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+      message: `{VALUE} is not valid!`,
+    },
+    required: true,
+  },
   presentAddress: { type: String, required: true },
   permanentAddress: { type: String, required: true },
-  gurdian: gurdianSchema,
-  localGurdian: localGurdianSchema,
+  gurdian: {
+    type: gurdianSchema,
+    required: true,
+  },
+  localGurdian: {
+    type: localGurdianSchema,
+    required: true,
+  },
   profileImg: String, // we can use Type also like this if dont have any extra property as like requied
-  isActive: ["active", "blocked"],
+  isActive: {
+    type: String,
+    required: true,
+    enum: ["active", "blocked"],
+    default: "active",
+  },
 });
 
 // 3. Create a Model.
@@ -92,4 +155,18 @@ const StudentSchema = new Schema<Student>({
 1. modelName = model<MainType>('DocName', provide schema)
 2. modelName and DocName should be same
 */
-export const StudentModel = model<Student>("Student", StudentSchema);
+
+// coustom instance method
+// StudentSchema.methods.isUserExists = async function (id: string) {
+//   const existingUser = Student.findOne({ id });
+
+//   return existingUser;
+// };
+
+// coustom static method
+StudentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = Student.findOne({ id });
+  return existingUser;
+};
+
+export const Student = model<TStudent, StudentModel>("Student", StudentSchema);
