@@ -16,6 +16,7 @@
 - `npm i validator` for validate
 - `npm install joi` for validate
 - `npm install zod ` for zod
+- `npm i bcrypt + npm i --save-dev @types/bcrypt` for hash the password
 
 # ZOD + mongoose validate working flow
 

@@ -1,6 +1,6 @@
 // 1. Create an interface representing a document in MongoDB. --> 2 in student.model.ts (1 line)
 
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
 // user name Type (sub of Student)
 export type TUserName = {
@@ -29,9 +29,11 @@ export type TLocalGurdian = {
 // Student type (Main Type)
 export type TStudent = {
   id: string;
+  user: Types.ObjectId;
+  // password: string;
   name: TUserName;
   gender: "male" | "female" | "other";
-  dateOfBirth: string;
+  dateOfBirth?: Date;
   email: string;
   contactNo: string;
   emergencyContactNo: string;
@@ -41,11 +43,14 @@ export type TStudent = {
   gurdian: TGurdian;
   localGurdian: TLocalGurdian;
   profileImg?: string;
-  isActive: "active" | "blocked";
+  admissionSemester: Types.ObjectId;
+  academicDepartment: Types.ObjectId;
+  isDeleted: boolean;
 };
 
 // coustom static -> for creating static method
 export interface StudentModel extends Model<TStudent> {
+  // eslint-disable-next-line no-unused-vars
   isUserExists(id: string): Promise<TStudent | null>;
 }
 
