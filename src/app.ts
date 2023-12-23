@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Request, Response } from "express";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
@@ -8,7 +9,8 @@ const app = express();
 
 // parser
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({ origin: ["http://localhost:5173"] }));
 
 // application routes -->
 // jkn url `/api/v1/students` ata req pabe tkn StudentRoutes e cole jabe
@@ -22,6 +24,7 @@ const getStartRes = async (req: Request, res: Response) => {
 app.get("/", getStartRes);
 
 // test route
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 app.get("/test", (req: Request, res: Response) => {
   Promise.reject();
 });

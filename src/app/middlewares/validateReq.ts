@@ -8,6 +8,7 @@ const validateRequest = (schema: AnyZodObject) => {
       // validation
       await schema.parseAsync({
         body: req.body,
+        cookies: req.cookies,
       });
       //   if everthing all right then go to next middleware
       next();
